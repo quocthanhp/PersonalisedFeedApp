@@ -14,5 +14,5 @@ public class Preference
     [StringLength(50)]
     public string Topic { get; set; } = null!;
 
-    public virtual User? User { set; get; }
+    public virtual User User { set; get; } = null!;
 }

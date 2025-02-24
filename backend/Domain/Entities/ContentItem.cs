@@ -24,4 +24,6 @@ public abstract class ContentItem
 
     [Required]
     public DateTime PublishedAt { get; set; }
+
+    public virtual ICollection<UserContentItem> UserContentItems { get; set; } = new HashSet<UserContentItem>();
 }

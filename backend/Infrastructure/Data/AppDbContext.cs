@@ -26,7 +26,20 @@ public class AppDbContext : DbContext
             .WithOne(p => p.User)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);  // Cascade delete user preferences if user is deleted
+
+        modelBuilder.Entity<UserContentItem>()
+            .HasKey(uci => new { uci.UserId, uci.ContentItemId });
+
+        modelBuilder.Entity<UserContentItem>()
+            .HasOne(uci => uci.User)
+            .WithMany(u => u.UserContentItems)
+            .HasForeignKey(una => una.UserId)
+            .OnDelete(DeleteBehavior.Cascade);  // Cascade delete users' associations
+
+        modelBuilder.Entity<UserContentItem>()
+            .HasOne(uci => uci.ContentItem)
+            .WithMany(ci => ci.UserContentItems)
+            .HasForeignKey(uci => uci.ContentItemId)
+            .OnDelete(DeleteBehavior.Cascade);  // Cascade delete articles' associations
     }
-
-
 }
