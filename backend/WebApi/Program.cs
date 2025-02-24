@@ -1,4 +1,16 @@
+using DotNetEnv;
+using Infrastructure.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Load the .env file into environment variables
+Env.Load();
+
+// Access the connection string from the environment variables
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+// Add DbContext with the connection string from .env file
+builder.Services.AddAppDbContext(connectionString);
 
 // Add services to the container.
 
