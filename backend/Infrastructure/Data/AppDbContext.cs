@@ -13,8 +13,8 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<Preference>? Preferences { set; get; }
-    public DbSet<NewsArticle>? NewsArticles { set; get; }
+    public DbSet<Preference> Preferences { set; get; }
+    public DbSet<ContentItem> ContentItems { set; get; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +26,10 @@ public class AppDbContext : DbContext
             .WithOne(p => p.User)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);  // Cascade delete user preferences if user is deleted
+
+        modelBuilder.Entity<ContentItem>()
+            .HasDiscriminator<string>("ContentType")
+            .HasValue<NewsArticle>("NewsArticle");
 
         modelBuilder.Entity<UserContentItem>()
             .HasKey(uci => new { uci.UserId, uci.ContentItemId });
