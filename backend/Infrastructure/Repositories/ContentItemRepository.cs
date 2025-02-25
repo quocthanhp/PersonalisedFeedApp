@@ -32,12 +32,19 @@ public class ContentItemRepository : IContentItemRepository
         throw new NotImplementedException();
     }
 
-    public Task<ContentItem[]> RetrieveAllAsync()
+    public async Task<ContentItem[]> RetrieveAllAsync(string userId)
     {
-        return _db.ContentItems.ToArrayAsync();
+        if (!int.TryParse(userId, out int userIdInt))
+        {
+            throw new ArgumentException("Invalid user ID format", nameof(userId));
+        }
+
+        return await (_db.ContentItems
+                        .Where(i => i.UserContentItems.Any(uci => uci.UserId == userIdInt))
+                        .ToArrayAsync());
     }
 
-    public Task<ContentItem?> RetrieveAsync(int id)
+    public Task<ContentItem?> RetrieveAsync(string id)
     {
         throw new NotImplementedException();
     }

@@ -53,15 +53,10 @@ public class PreferenceRepository : IPreferenceRepository
 
     public Task<Preference[]> RetrieveAllAsync()
     {
-        if (_db.Preferences == null)
-        {
-            throw new InvalidOperationException("Preferences DbSet is null.");
-        }
-
         return _db.Preferences.ToArrayAsync();
     }
 
-    public Task<Preference?> RetrieveAsync(int id)
+    public Task<Preference?> RetrieveAsync(string id)
     {
         throw new NotImplementedException();
     }
