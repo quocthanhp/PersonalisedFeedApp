@@ -16,6 +16,8 @@ public class AppDbContext : DbContext
     public DbSet<Preference> Preferences { set; get; }
     public DbSet<ContentItem> ContentItems { set; get; }
 
+    public DbSet<UserContentItem> UserContentItems { set; get; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

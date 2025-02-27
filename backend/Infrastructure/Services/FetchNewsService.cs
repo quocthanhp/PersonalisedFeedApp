@@ -37,7 +37,7 @@ namespace Infrastructure.Services
              + "from=2025-02-26&"
              + "sortBy=popularity&"
              + "language=en&"
-             + $"apiKey=9b00712d8e184d71a9fb41b068d10df8";
+             + $"apiKey={apiKey}";
 
             try
             {
