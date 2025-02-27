@@ -1,6 +1,5 @@
 using Application.Interfaces;
 using DotNetEnv;
-using System.Text.Json;
 using Infrastructure.External.Models;
 using Infrastructure.External.Enums;
 using Newtonsoft.Json;
@@ -14,7 +13,7 @@ namespace Infrastructure.Services
         {
             _httpClient = httpClient;
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("PersonalisedFeedApp/1.0");
-            Env.Load();
+            Env.Load("../../../.env"); 
         }
 
         public async Task<NewsAPIResponse> FetchNewsAsync(string topic)

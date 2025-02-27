@@ -5,8 +5,6 @@ using Application.Interfaces;
 using Infrastructure.Services;
 
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Load the .env file into environment variables
