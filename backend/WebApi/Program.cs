@@ -2,6 +2,10 @@ using DotNetEnv;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Application.Interfaces;
+using Infrastructure.Services;
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
+builder.Services.AddScoped<IFetchNewsService, FetchNewsService>();
+builder.Services.AddHttpClient<IFetchNewsService, FetchNewsService>();
 
 var app = builder.Build();
 
