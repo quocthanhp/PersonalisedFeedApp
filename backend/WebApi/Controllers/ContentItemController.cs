@@ -22,6 +22,9 @@ public class ContentItemController : ControllerBase
         return await _repo.RetrieveAllAsync(userId);
     }
 
+    [HttpPost]
+    [ProducesResponseType(201, Type = typeof(ContentItem))]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> Create([FromBody] ContentItem c)
     {
         if (c is null)

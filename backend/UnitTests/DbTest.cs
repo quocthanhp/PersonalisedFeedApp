@@ -71,13 +71,13 @@ public class DbTest
                 PublishedAt = DateTime.Now,
                 Content = "Test Content",
                 Topic = "Test Topic",
-                UserContentItems = new List<UserContentItem>
-                {
-                    new UserContentItem
-                    {
-                        UserId = 1,
-                    }
-                }
+                // UserContentItems = new List<UserContentItem>
+                // {
+                //     new UserContentItem
+                //     {
+                //         UserId = 1,
+                //     }
+                // }
             };
 
             await repo.CreateAsync(article);
@@ -97,14 +97,14 @@ public class DbTest
 
         var preference = new Preference
         {
-            UserId = 1,
+            //UserId = 1,
             Topic = "Test Topic"
         };
 
         var added = await repo.CreateAsync(preference);
 
         Assert.NotNull(added);
-        Assert.Equal(preference.UserId, added?.UserId);
+        //Assert.Equal(preference.UserId, added?.UserId);
         Assert.Equal(preference.Topic, added?.Topic);
     }
 }

@@ -8,7 +8,7 @@ namespace Infrastructure.Repositories;
 
 public class PreferenceRepository : IPreferenceRepository
 {
-    private AppDbContext _db;
+    private readonly AppDbContext _db;
 
     public PreferenceRepository(AppDbContext db)
     {

@@ -9,4 +9,5 @@ public interface IContentItemRepository
     Task<ContentItem?> RetrieveAsync(string id);
     Task<ContentItem?> UpdateAsync(ContentItem c);
     Task<bool?> DeleteAsync(string id);
+    Task<IEnumerable<ContentItem>?> CreateBulkAsync(IEnumerable<ContentItem> contentItems); 
 }

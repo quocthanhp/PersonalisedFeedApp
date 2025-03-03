@@ -1,38 +1,72 @@
-using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Application.Interfaces;
-
+using Application.Messaging;
+using System.Text.Json;
+using Domain.Entities;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace AzureFunctions
 {
     public class FetchNews
     {
-        private readonly HttpClient client = new();
         private readonly IFetchNewsService _fetchNewsService;
-
-        public FetchNews(IFetchNewsService fetchNewsService)
+        private readonly IContentItemRepository _contentItemRepository;
+        public FetchNews(IFetchNewsService fetchNewsService, IContentItemRepository contentItemRepository)
         {
             _fetchNewsService = fetchNewsService;
+            _contentItemRepository = contentItemRepository;
         }
 
         [FunctionName("FetchNews")]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/fetch")] HttpRequest req)
+        public async Task Run(
+            [RabbitMQTrigger("new-topic", ConnectionStringSetting = "RabbitMQConnection")] byte[] messageBytes
+            , ILogger log)
         {
-            string topic = req.Query["topic"];
+            TopicQueueMessage message = JsonSerializer.Deserialize<TopicQueueMessage>(messageBytes);
+            log.LogInformation($"Fetching news for topic: {message.Topic}");
 
-            if (string.IsNullOrEmpty(topic))
+            if (message is null)
             {
-                return new BadRequestObjectResult("Please pass a topic in the query string");
+                log.LogInformation("null message");
+                return;
             }
 
-            var newsResponse = await _fetchNewsService.FetchNewsAsync(topic);
+            var topic = message.Topic;
+            var newsArticles = await _fetchNewsService.FetchNewsAsync(topic);
 
-            return new OkObjectResult(newsResponse);
+            if (newsArticles is null)
+            {
+                log.LogInformation("null articles");
+                return;
+                
+            }
+
+            IEnumerable<NewsArticle> articles = newsArticles.Articles.Select(a => new NewsArticle
+            {
+                Author = a.Author,
+                Source = a.Source.Name,
+                Content = a.Content,
+                Title = a.Title,
+                Topic = topic,
+                PublishedAt = a?.PublishedAt ?? System.DateTime.Now
+            });
+
+            foreach (var article in articles)
+            {
+                System.Console.WriteLine(article.Source);
+                System.Console.WriteLine(article.Author);
+                System.Console.WriteLine(article.Title);
+                System.Console.WriteLine(article.Content);
+                System.Console.WriteLine(article?.PublishedAt ?? System.DateTime.Now);
+                //System.Console.WriteLine( article.Description);
+                System.Console.WriteLine(article.Content);
+            }
+
+            log.LogInformation("start adding...");
+            await _contentItemRepository.CreateBulkAsync(articles);
         }
     }
 }

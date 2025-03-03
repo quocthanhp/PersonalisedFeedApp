@@ -56,7 +56,11 @@ namespace Infrastructure.Services
                         };
                     }
 
-                    WriteLine(apiResponse.TotalResults);
+                    //Return top 10 papers only
+                    apiResponse.Articles = apiResponse.Articles.Take(10).ToList();
+                    apiResponse.TotalResults = 10;
+                    
+                    WriteLine("Total Results: " + apiResponse.TotalResults);
 
                     return apiResponse;
                 }

@@ -1,18 +1,20 @@
 using Application.Interfaces;
 using Domain.Entities;
-using Microsoft.AspNetCore.Mvc; 
-
+using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers;
+using Application.Messaging;
 
 [Route("api/[controller]")]
 [ApiController]
 public class PreferenceController : ControllerBase
 {
     private readonly IPreferenceRepository _repo;
+    private readonly IMessagePublisher _publisher;
 
-    public PreferenceController(IPreferenceRepository repo)
+    public PreferenceController(IPreferenceRepository repo, IMessagePublisher publisher)
     {
         _repo = repo;
+        _publisher = publisher;
     }
 
     [HttpGet]
@@ -32,6 +34,8 @@ public class PreferenceController : ControllerBase
             return BadRequest();
         }
 
+        // Might consider checking dup
+
         Preference? addPreference = await _repo.CreateAsync(p);
         if (addPreference is null)
         {
@@ -39,7 +43,9 @@ public class PreferenceController : ControllerBase
         }
         else
         {
-            // Trigger Azure function to fetch content
+            // Send topic to queue
+            var message = new TopicQueueMessage { Topic = addPreference.Topic };// //UserId = addPreference.UserId };
+            await _publisher.PublishAsync("new-topic", message);
 
             return Ok(new { message = "Preference added and fetching started." });
         }
