@@ -5,6 +5,7 @@ using Infrastructure.Services;
 using Application.Interfaces;
 using DotNetEnv;
 using Infrastructure.Data;
+using Infrastructure.Messaging;
 
 [assembly: FunctionsStartup(typeof(AzureFunctions.Startup))]
 namespace AzureFunctions
@@ -17,6 +18,8 @@ namespace AzureFunctions
         {
             builder.Services.AddHttpClient<IFetchNewsService, FetchNewsService>();
             builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
+            builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
+            builder.Services.AddSingleton<IMessagePublisher>(sp => new Publisher("localhost"));
 
             // Load the .env file into environment variables
             Env.Load("/Users/quocthanhpham/Documents/PersonalisedFeedApp/backend/.env");

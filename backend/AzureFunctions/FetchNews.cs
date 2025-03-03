@@ -54,19 +54,8 @@ namespace AzureFunctions
                 PublishedAt = a?.PublishedAt ?? System.DateTime.Now
             });
 
-            foreach (var article in articles)
-            {
-                System.Console.WriteLine(article.Source);
-                System.Console.WriteLine(article.Author);
-                System.Console.WriteLine(article.Title);
-                System.Console.WriteLine(article.Content);
-                System.Console.WriteLine(article?.PublishedAt ?? System.DateTime.Now);
-                //System.Console.WriteLine( article.Description);
-                System.Console.WriteLine(article.Content);
-            }
-
-            log.LogInformation("start adding...");
-            await _contentItemRepository.CreateBulkAsync(articles);
+            log.LogInformation("start adding articles to DB...");
+            //await _contentItemRepository.CreateBulkAsync(articles);
         }
     }
 }
