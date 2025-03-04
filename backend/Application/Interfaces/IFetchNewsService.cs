@@ -1,4 +1,4 @@
-using Infrastructure.External.Models;
+using Domain.DTOs.Models.News;
 
 namespace Application.Interfaces
 {

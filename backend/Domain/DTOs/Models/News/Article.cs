@@ -1,4 +1,4 @@
-namespace Infrastructure.External.Models
+namespace Domain.DTOs.Models.News
 {
     public class Article
     {

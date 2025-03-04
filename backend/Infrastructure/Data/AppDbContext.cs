@@ -31,7 +31,8 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<ContentItem>()
             .HasDiscriminator<string>("ContentType")
-            .HasValue<NewsArticle>("NewsArticle");
+            .HasValue<NewsArticle>("NewsArticle")
+            .HasValue<SocialMedia>("SocialMedia");
 
         // modelBuilder.Entity<UserContentItem>()
         //     .HasKey(uci => new { uci.UserId, uci.ContentItemId });
