@@ -1,4 +1,4 @@
-using Infrastructure.External.Enums;
+using Domain.DTOs.Enums;
 
 namespace Domain.DTOs.Models.News
 {

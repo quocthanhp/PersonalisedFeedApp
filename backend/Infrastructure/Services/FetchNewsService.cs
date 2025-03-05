@@ -1,7 +1,7 @@
 using Application.Interfaces;
 using DotNetEnv;
-using Infrastructure.External.Models;
-using Infrastructure.External.Enums;
+using Domain.DTOs.Models.News;
+using Domain.DTOs.Enums;
 using Newtonsoft.Json;
 
 namespace Infrastructure.Services

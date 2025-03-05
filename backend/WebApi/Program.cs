@@ -31,6 +31,8 @@ builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
 builder.Services.AddScoped<IFetchNewsService, FetchNewsService>();
 builder.Services.AddHttpClient<IFetchNewsService, FetchNewsService>();
+builder.Services.AddScoped<IFetchRedditPostService, FetchRedditPostService>();
+builder.Services.AddHttpClient<IFetchRedditPostService, FetchRedditPostService>();
 
 
 // Set up queue
@@ -41,6 +43,7 @@ string rabbitMqHost = builder.Configuration.GetValue<string>("RabbitMQ:Host") ??
 builder.Services.AddSingleton<IMessagePublisher>(sp => new Publisher(rabbitMqHost));
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

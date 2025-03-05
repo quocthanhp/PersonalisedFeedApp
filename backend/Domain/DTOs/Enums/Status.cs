@@ -1,4 +1,4 @@
-namespace Infrastructure.External.Enums
+namespace Domain.DTOs.Enums
 {
     public enum Status
     {
