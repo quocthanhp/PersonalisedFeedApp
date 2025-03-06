@@ -7,6 +7,7 @@ namespace Application.Interfaces
 {
     public interface IMessagePublisher
     {
-        Task PublishAsync<T>(string queueName, T message);
+        Task PublishAsync<T>(T message);
+        void DeclareQueues(IEnumerable<string> queueNames);
     }
 }

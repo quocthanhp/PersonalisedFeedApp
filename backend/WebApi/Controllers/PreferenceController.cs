@@ -15,6 +15,7 @@ public class PreferenceController : ControllerBase
     {
         _repo = repo;
         _publisher = publisher;
+        _publisher.DeclareQueues(new List<string> { "news-queue", "reddit-queue" });
     }
 
     [HttpGet]
@@ -45,7 +46,7 @@ public class PreferenceController : ControllerBase
         {
             // Send topic to queue
             var message = new TopicQueueMessage { Topic = addPreference.Topic };// //UserId = addPreference.UserId };
-            await _publisher.PublishAsync("new-topic", message);
+            await _publisher.PublishAsync(message);
 
             return Ok(new { message = "Preference added and fetching started." });
         }

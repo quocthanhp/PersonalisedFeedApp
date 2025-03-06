@@ -7,6 +7,7 @@ using Domain.Entities;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 
 namespace AzureFunctions
 {
@@ -14,6 +15,7 @@ namespace AzureFunctions
     {
         private readonly IFetchNewsService _fetchNewsService;
         private readonly IContentItemRepository _contentItemRepository;
+
         public FetchNews(IFetchNewsService fetchNewsService, IContentItemRepository contentItemRepository)
         {
             _fetchNewsService = fetchNewsService;
@@ -22,7 +24,7 @@ namespace AzureFunctions
 
         [FunctionName("FetchNews")]
         public async Task Run(
-            [RabbitMQTrigger("new-topic", ConnectionStringSetting = "RabbitMQConnection")] byte[] messageBytes
+            [RabbitMQTrigger("news-queue", ConnectionStringSetting = "RabbitMQConnection")] byte[] messageBytes
             , ILogger log)
         {
             TopicQueueMessage message = JsonSerializer.Deserialize<TopicQueueMessage>(messageBytes);
@@ -37,11 +39,10 @@ namespace AzureFunctions
             var topic = message.Topic;
             var newsArticles = await _fetchNewsService.FetchNewsAsync(topic);
 
-            if (newsArticles is null)
+            if (newsArticles is null || newsArticles.Status == Domain.DTOs.Enums.Status.Error)
             {
-                log.LogInformation("null articles");
+                log.LogInformation("null articles or error in fetching articles");
                 return;
-                
             }
 
             IEnumerable<NewsArticle> articles = newsArticles.Articles.Select(a => new NewsArticle
@@ -55,7 +56,8 @@ namespace AzureFunctions
             });
 
             log.LogInformation("start adding articles to DB...");
-            //await _contentItemRepository.CreateBulkAsync(articles);
+
+            await _contentItemRepository.CreateBulkAsync(articles);
         }
     }
 }

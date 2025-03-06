@@ -34,13 +34,7 @@ builder.Services.AddHttpClient<IFetchNewsService, FetchNewsService>();
 builder.Services.AddScoped<IFetchRedditPostService, FetchRedditPostService>();
 builder.Services.AddHttpClient<IFetchRedditPostService, FetchRedditPostService>();
 
-
-// Set up queue
-// Get RabbitMQ host from config (or use "localhost" as default)
-string rabbitMqHost = builder.Configuration.GetValue<string>("RabbitMQ:Host") ?? "localhost";
-
-// Register Publisher with the configured host
-builder.Services.AddSingleton<IMessagePublisher>(sp => new Publisher(rabbitMqHost));
+builder.Services.AddSingleton<IMessagePublisher, Publisher>();
 
 var app = builder.Build();
 

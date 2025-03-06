@@ -13,13 +13,12 @@ namespace AzureFunctions
 
     public class Startup : FunctionsStartup
     {
-
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.Services.AddHttpClient<IFetchNewsService, FetchNewsService>();
             builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
             builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
-            builder.Services.AddSingleton<IMessagePublisher>(sp => new Publisher("localhost"));
+            builder.Services.AddScoped<IFetchRedditPostService, FetchRedditPostService>();
 
             // Load the .env file into environment variables
             Env.Load("/Users/quocthanhpham/Documents/PersonalisedFeedApp/backend/.env");

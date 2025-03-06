@@ -7,7 +7,7 @@ public abstract class ContentItem
     [Key]
     public int ContentItemId { get; set; }
 
-    [StringLength(100)]
+    [StringLength(255)]
     public string? Title { set; get; }
 
     [Required]

@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using System.Text.Json;
+using System.Collections.Concurrent;
 
 namespace Infrastructure.Messaging
 {
@@ -9,23 +10,40 @@ namespace Infrastructure.Messaging
     {
         private readonly IConnection _connection;
         private readonly IModel _channel;
+        private readonly string _exchangeName;
 
-        public Publisher(string hostName)
+        private readonly string _queueName;
+
+        public Publisher(IConfiguration configuration)
         {
-            ConnectionFactory factory = new() { HostName = hostName };
+            ConnectionFactory factory = new() { HostName = configuration.GetSection("RabbitMQ")["HostName"] };
+            _exchangeName = configuration.GetSection("RabbitMQ")["ExchangeName"] ?? "topic-exchange";
+            _queueName = configuration.GetSection("RabbitMQ")["QueueName"] ?? "topic-queue";
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
+
+            // Declare the exchange as Fanout
+            _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Fanout);
         }
 
-        public async Task PublishAsync<T>(string queueName, T message)
+        public void DeclareQueues(IEnumerable<string> queueNames)
         {
-            _channel.QueueDeclare(queue: queueName, durable: false,
-            exclusive: false, autoDelete: false, arguments: null);
+            foreach (var queueName in queueNames)
+            {
+                // Declare and bind each queue to the exchange
+                _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                _channel.QueueBind(queue: queueName, exchange: _exchangeName, routingKey: string.Empty);
+            }
+        }
 
+
+        public async Task PublishAsync<T>(T message)
+        {
             byte[] body = JsonSerializer.SerializeToUtf8Bytes(message);
 
-            _channel.BasicPublish(exchange: string.Empty,
-                routingKey: queueName,
+            // Publish to the exchange 
+            _channel.BasicPublish(exchange: _exchangeName,
+                routingKey: "",
                 basicProperties: null, body: body);
 
             await Task.CompletedTask;
