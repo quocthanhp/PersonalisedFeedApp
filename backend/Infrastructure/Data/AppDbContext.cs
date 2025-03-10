@@ -23,11 +23,11 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Each User can have multiple preferences
-        // modelBuilder.Entity<User>()
-        //     .HasMany(u => u.Preferences)
-        //     .WithOne(p => p.User)
-        //     .HasForeignKey(p => p.UserId)
-        //     .OnDelete(DeleteBehavior.Cascade);  // Cascade delete user preferences if user is deleted
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Preferences)
+            .WithOne(p => p.User)
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Cascade);  // Cascade delete user preferences if user is deleted
 
         modelBuilder.Entity<ContentItem>()
             .HasDiscriminator<string>("ContentType")
