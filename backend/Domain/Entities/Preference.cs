@@ -8,7 +8,7 @@ public class Preference
     public int PreferenceId { get; set; }
 
     [Required]
-    public int UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
     [Required]
     [StringLength(50)]

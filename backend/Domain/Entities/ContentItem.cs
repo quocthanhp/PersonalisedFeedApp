@@ -5,7 +5,7 @@ namespace Domain.Entities;
 public abstract class ContentItem
 {
     [Key]
-    public int ContentItemId { get; set; }
+    public string ContentItemId { get; set; } = null!;
 
     [StringLength(255)]
     public string? Title { set; get; }
