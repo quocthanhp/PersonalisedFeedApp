@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Data;
 
@@ -49,5 +50,14 @@ public class AppDbContext : IdentityDbContext<User>
         //     .WithMany(ci => ci.UserContentItems)
         //     .HasForeignKey(uci => uci.ContentItemId)
         //     .OnDelete(DeleteBehavior.Cascade);  // Cascade delete articles' associations
+
+        // Seed roles
+        List<IdentityRole> roles = new List<IdentityRole>
+            {
+                new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Name = "User", NormalizedName = "USER" }
+            };
+
+        modelBuilder.Entity<IdentityRole>().HasData(roles);
     }
 }
