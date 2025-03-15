@@ -36,6 +36,10 @@ public class AppDbContext : IdentityDbContext<User>
             .HasValue<NewsArticle>("NewsArticle")
             .HasValue<SocialMedia>("SocialMedia");
 
+        modelBuilder.Entity<ContentItem>()
+            .Property(c => c.ContentItemId)
+            .ValueGeneratedOnAdd();
+
         // modelBuilder.Entity<UserContentItem>()
         //     .HasKey(uci => new { uci.UserId, uci.ContentItemId });
 

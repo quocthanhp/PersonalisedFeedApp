@@ -30,40 +30,37 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 // Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme =
+    options.DefaultChallengeScheme =
+    options.DefaultForbidScheme =
+    options.DefaultScheme =
+    options.DefaultSignInScheme =
+    options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SIGN_KEY")))
-        };
-    });
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])
+        )
+    };
+});
 
 // Add authorization
-builder.Services.AddAuthorization();
+// builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
-builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
-builder.Services.AddScoped<IFetchNewsService, FetchNewsService>();
-builder.Services.AddHttpClient<IFetchNewsService, FetchNewsService>();
-builder.Services.AddScoped<IFetchRedditPostService, FetchRedditPostService>();
-builder.Services.AddHttpClient<IFetchRedditPostService, FetchRedditPostService>();
-
-builder.Services.AddSingleton<IMessagePublisher, Publisher>();
-
-builder.Services.AddScoped<ITokenService, TokenService>();
-
-// Configure the HTTP request pipeline.
 builder.Services.AddSwaggerGen(option =>
     {
         option.SwaggerDoc("v1", new OpenApiInfo { Title = "Feed Service API", Version = "v1" });
@@ -92,24 +89,40 @@ builder.Services.AddSwaggerGen(option =>
         });
     });
 
+
+builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
+builder.Services.AddScoped<IContentItemRepository, ContentItemRepository>();
+builder.Services.AddScoped<IFetchNewsService, FetchNewsService>();
+builder.Services.AddHttpClient<IFetchNewsService, FetchNewsService>();
+builder.Services.AddScoped<IFetchRedditPostService, FetchRedditPostService>();
+builder.Services.AddHttpClient<IFetchRedditPostService, FetchRedditPostService>();
+builder.Services.AddSingleton<IMessagePublisher, Publisher>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+
+builder.Services.AddLogging(logging =>
+{
+    logging.AddConsole();  // Enables logging to the console
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json",
-            "Feed Service API Version 1");
-
-        c.SupportedSubmitMethods(new[] {
-            SubmitMethod.Get, SubmitMethod.Post,
-            SubmitMethod.Put, SubmitMethod.Delete });
-    });
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(x => x
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    //.WithOrigins("http://localhost:3000") // used when deploy (set to domain)
+    .SetIsOriginAllowed(origin => true)
+    );
+
 
 app.UseAuthentication();
 app.UseAuthorization();
