@@ -1,6 +1,6 @@
 # PersonalisedFeedApp
 
-Personalized Feed App is a dynamic and intelligent platform designed to deliver customized content based on your interests. The app aggregates news articles, trending topics, and social media posts, tailored specifically to your preferences.
+Personalized Feed App is a dynamic and intelligent platform designed to deliver customised content based on your interests. The app aggregates news articles, trending topics, and social media posts, tailored specifically to your preferences.
 
 # Key Features
 * **Personalised Feed**: Get a feed of news and social media posts based on your topics of interest.
