@@ -10,7 +10,8 @@ Personalized Feed App is a dynamic and intelligent platform designed to deliver 
 # Architecture
 
 ## Feed Publishing
+![](https://github.com/quocthanhp/PersonalisedFeedApp/blob/main/docs/Architecture/PublishFeed.png)
 
 ## Feed Retrieval
-
+![](https://github.com/quocthanhp/PersonalisedFeedApp/blob/main/docs/Architecture/GetFeed.png)
   
